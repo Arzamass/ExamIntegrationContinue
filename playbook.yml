@@ -1,0 +1,76 @@
+--- 
+- 
+  hosts: container-wildfly
+  tasks: 
+
+    - name: "Créer un utilisateur système wildfly"
+    user: 
+    comment: "Creation utilisateur wildlfy"
+    name: wildfly
+    system: true
+
+
+    - name: "Presence du JDK8"
+    package: "name=openjdk-8-jdk-headless state=present"
+
+
+    - name: Télécharger l’archive de Wildfly et la décompresser
+    unarchive:
+    src: 'http://download.jboss.org/wildfly/11.0.0.Final/wildfly-11.0.0.Final.tar.gz'
+    dest: '/opt/'
+    owner: wildfly
+    remote_src: yes
+
+
+    - name: renommer le répertoire
+    command: mv '/opt/wildfly-11.0.0.Final/'  '/opt/wildfly/'
+
+
+    - name: Créer le répertoire /etc/wildfly
+    file:
+    mode: 493
+    remote_src: yes
+    path: '/etc/wildfly/'
+    state: directory
+    owner: wildfly
+
+
+
+    - name: Copier le fichier /opt/wildfly/docs/contrib/scripts/systemd/wildfly.conf dans /etc/wildfly/
+    copy:
+    mode: 493
+    remote_src: yes
+    src: '/opt/wildfly/docs/contrib/scripts/systemd/wildfly.conf'
+    dest: '/etc/wildfly/'
+    owner: wildfly
+
+
+
+
+    - name: Copier le fichier /opt/wildfly/docs/contrib/scripts/systemd/wildfly.service dans /etc/systemd/system
+    copy:
+    remote_src: yes
+    src: '/opt/wildfly/docs/contrib/scripts/systemd/wildfly.service'
+    dest: '/etc/systemd/system/'
+
+
+
+    - name: Création du repertoire /opt/wildfly/bin
+    file:
+    mode: 493
+    path: '/opt/wildfly/bin'
+    state: directory
+    owner: wildfly
+
+
+    - name: Copier le fichier /opt/wildfly/docs/contrib/scripts/systemd/lauch.sh dans /opt/wildfly/bin
+    copy:
+    mode: 493
+    remote_src: yes
+    src: '/opt/wildfly/docs/contrib/scripts/systemd/launch.sh'
+    dest: '/opt/wildfly/bin'
+    owner: wildfly
+
+
+
+
